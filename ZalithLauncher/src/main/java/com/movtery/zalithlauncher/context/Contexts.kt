@@ -98,7 +98,7 @@ fun Context.copyLocalFile(
     val flags = Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
     try {
         contentResolver.takePersistableUriPermission(uri, flags)
-    } catch (e: SecurityException) {
+    } catch (e: Exception) { // COBBLEVERSE: URIs file:// também lançam outras exceções aqui
         Logger.warning(TAG, "Failed to take persistable permission for URI: $uri", e)
     }
 

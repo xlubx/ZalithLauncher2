@@ -21,6 +21,7 @@ package com.movtery.zalithlauncher.ui.activities
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.net.Uri
+import com.movtery.zalithlauncher.cobbleverse.CobbleverseBootstrap
 import android.os.Build
 import android.os.Bundle
 import android.view.KeyEvent
@@ -224,10 +225,23 @@ class MainActivity : BaseAppCompatActivity() {
         //初始化通知管理（创建渠道）
         NotificationManager.initManager(this)
 
-        //检查更新
+        //检查更新 (COBBLEVERSE: desativado - apontaria para o APK oficial do Zalith e substituiria este app)
+        /*
         if (!isImporting && launcherUpgradeViewModel.operation == LauncherUpgradeOperation.None) {
             lifecycleScope.launch {
                 launcherUpgradeViewModel.checkOnAppStart()
+            }
+        }
+        */
+
+        //COBBLEVERSE: instala/atualiza o pack automaticamente
+        if (!isImporting) {
+            lifecycleScope.launch {
+                CobbleverseBootstrap.runIfNeeded(
+                    context = this@MainActivity,
+                    vm = modpackImportViewModel,
+                    keepScreen = { on -> keepScreen(on) }
+                )
             }
         }
 

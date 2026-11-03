@@ -153,6 +153,7 @@ class ModpackImportViewModel : ViewModel() {
     fun import(
         context: Context,
         uri: Uri,
+        fixedVersionName: String? = null, // COBBLEVERSE: se definido, não pergunta o nome da versão
         onStart: () -> Unit = {},
         onStop: () -> Unit = {}
     ) {
@@ -165,7 +166,11 @@ class ModpackImportViewModel : ViewModel() {
             context = context,
             uri = uri,
             scope = viewModelScope,
-            waitForVersionName = ::waitForVersionName,
+            waitForVersionName = if (fixedVersionName != null) {
+                { _: String -> fixedVersionName }
+            } else {
+                ::waitForVersionName
+            },
             waitForConfirmMobileData = ::waitForConfirmMobileData
         ).also {
             it.startImport(

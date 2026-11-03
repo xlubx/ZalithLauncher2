@@ -115,10 +115,20 @@ android {
 
     signingConfigs {
         create("releaseBuild") {
-            storeFile = file("zalith_launcher.jks")
-            storePassword = getKeyFromLocal("STORE_PASSWORD", ".store_password.txt")
-            keyAlias = "movtery_zalith"
-            keyPassword = getKeyFromLocal("KEY_PASSWORD", ".key_password.txt")
+            // COBBLEVERSE: chave PRÓPRIA via variáveis de ambiente (o workflow cria).
+            // Sem elas, cai na chave de debug (serve só para testes).
+            val ksPath = System.getenv("KEYSTORE_FILE")
+            if (ksPath != null && File(ksPath).isFile) {
+                storeFile = File(ksPath)
+                storePassword = System.getenv("STORE_PASSWORD") ?: ""
+                keyAlias = System.getenv("KEY_ALIAS") ?: "cobbleverse"
+                keyPassword = System.getenv("KEY_PASSWORD") ?: storePassword
+            } else {
+                storeFile = file("zalith_launcher_debug.jks")
+                storePassword = defaultStorePassword
+                keyAlias = "movtery_zalith_debug"
+                keyPassword = defaultKeyPassword
+            }
         }
         create("debugBuild") {
             storeFile = file("zalith_launcher_debug.jks")
@@ -129,8 +139,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = zalithPackageName
-        applicationIdSuffix = ".v2"
+        applicationId = "br.cobbleverse.mobile"
         minSdk = 26
         targetSdk = 34
         versionCode = launcherVersionCode
